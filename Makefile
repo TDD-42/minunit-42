@@ -1,4 +1,4 @@
-################  COLORS	##################
+################  COLORS	######################
 L_RED			=			\033[0;31m
 L_REDB			=			\033[1;31m
 L_WHITE			=			\033[0;37m
@@ -7,38 +7,34 @@ L_YELLOW		=			\033[0;33m
 L_YELLOWB		=			\033[1;33m
 L_GREEN			=			\033[0;32m
 L_GREENB		=			\033[1;32m
-################ CONFIG		##################
+################ CONFIG	TESTS	##################
+DIR				=			../srcs/
 DIR_OUTS		=			./outs/
-SRCS 			= 			$(wildcard ./*.c)
-RUN				=			$(addprefix $(DIR_OUTS), $(srcs));
+EXEC_OUTS		=			$(wildcard $(DIR_OUTS)*)
+YOUR_FILES		=			# Add your files with the function you can test
+TESTS			=			# Add your test names without .c
 HEADERS_TEST 	= 			minunit.h
+################ CONFIG YOUR PROJECT #############
 FLAGS 			= 			-Wall -Werror -Wextra
-################ RULES		##################
+################ RULES		######################
 
-all: 		$(SRCS:.c=.o) $(RUN) clean_outs
+all: 		$(TESTS) $(EXEC_OUTS)
+	@echo $(EXEC_OUTS)
 
-%.o: 		%.c $(HEADERS)
-	@echo  "$(L_YELLOWB)[COMPILE $@]$(L_WHITE)"
+$(TESTS): $(HEADERS)
+	$(CC)	-g $(addsuffix .c, $@) $(YOUR_FILES) -o $(addprefix $(DIR_OUTS), $@)
 
-$(RUN):
-	@echo  "$(L_YELLOWB)[TEST $@]$(L_WHITE)"
-	@$@
-	@echo  "$(L_WHITEB)"*******************************************************************"$(L_WHITEB)"
+$(EXEC_OUTS):
+	@echo  "$(L_YELLOWB)$@:$(L_WHITE) " && $@
 
-norm:
-	@cd 		$(DIR) && $(MAKE) $@
-
-clean_outs:
-	@rm 		-f $(DIR_OUTS)
-
-cleant:
+clean:
 	@rm			-f $(SRCS:.c=.o)
-	
-clean:		cleant
 	@cd 		$(DIR) && $(MAKE) $@
 
-fclean: 	cleant
-	@rm 		-f run.exec
+fclean:			clean
+	@rm 		-f $(EXEC_OUTS)
 	@cd 		$(DIR) && $(MAKE) $@
 
-re: fclean clean clean_outs cleant all
+re: fclean all
+
+.PHONY: re fclean clean all $(TESTS) $(EXEC_OUTS)
